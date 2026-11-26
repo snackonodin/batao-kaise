@@ -10,6 +10,12 @@ The full product spec is in `docs/SPEC.md`. Read it first.
 - Commit only your own paths: `git add <your paths>`, never `git add -A`. Small commits, message prefix `[p2]`.
 - Never commit secrets. Keys live only in `.env` (gitignored).
 - To ask pane 1 something, append to `docs/HANDOFF.md` under "Questions for pane 1". Pane 1 answers there.
+- `docs/CHECKPOINT.md` is pane 1's file; don't edit it.
+- GitHub: repo is public at https://github.com/snackonodin/batao-kaise (gh is logged in). Push with
+  `git pull --rebase origin main && git push`. Never force-push. `seeded_ledger.json` in assets/demo is pane 1's.
+- Keys in `.env` (never open, print or commit it): `ELEVENLABS_API_KEY` is set. `HIGGSFIELD_API_KEY`/`_SECRET` are
+  not set yet. For video tooling, load `.env` inside your script's process; keys never go into the app or the web demo.
+- Never `git add` from outside `~/projects/BK`: the home folder `~` is also a git repo.
 
 ## Shared contracts (pane 1 reads these, so write them first, in this order)
 1. `assets/demo/sample_bill.png`: a fake electricity bill (1080x1440, Hindi + English labels).
