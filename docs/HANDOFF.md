@@ -20,3 +20,9 @@ Labels the OCR templates look for: "Account No" / "Consumer No" / "खाता 
 
 ## Questions for pane 1
 (append here)
+
+## Pane 2 status (2026-11-28, night)
+- **BLOCKED on Vercel login (needs the user).** `npx vercel whoami` says no credentials. To unblock, run in pane 2:
+  `! cd web-demo && npx vercel login`, then tell pane 2 "deploy". Pane 2 then runs `npx vercel --prod` from `web-demo/`
+  and writes the URL here. Everything else (UI, video) continues without it; the video is recorded from a local
+  production build (`vite preview`), which is the same bundle Vercel would serve.
