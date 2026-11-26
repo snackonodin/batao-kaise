@@ -1,0 +1,8 @@
+[
+  {"name": "Ramesh Kumar", "entries": [{"amount": 150, "note": "chawal, daal", "days_ago": 9}, {"amount": 50, "note": "sabun", "days_ago": 4}]},
+  {"name": "Ramesh Yadav", "entries": [{"amount": 300, "note": "aata", "days_ago": 12}, {"amount": -100, "note": "wapas diye", "days_ago": 5}]},
+  {"name": "Suresh Pal", "entries": [{"amount": 450, "note": "tel, cheeni", "days_ago": 15}]},
+  {"name": "Geeta Devi", "entries": [{"amount": 120, "note": "doodh", "days_ago": 2}]},
+  {"name": "Mohan Lal", "entries": [{"amount": 800, "note": "rashan", "days_ago": 20}, {"amount": -300, "note": "wapas diye", "days_ago": 7}]},
+  {"name": "Salma Bano", "entries": [{"amount": 90, "note": "biscuit", "days_ago": 1}]}
+]

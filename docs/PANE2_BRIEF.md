@@ -1,57 +1,53 @@
-# Pane 2 brief: Batao Kaise (non-Android work)
+# Pane 2 brief (v3, 2026-11-27): Batao Kaise web demo UI + video
 
-You are the second Claude session on this repo (`~/projects/BK`). Pane 1 owns the Android code.
-The full product spec is in `docs/SPEC.md`. Read it first.
+**Scope changed (user decision).** The submission is ONE core voice workflow, not a full product, delivered as a
+**web demo** (no Android build needed). Deliverables: public GitHub code that runs with no keys, a YouTube demo (≤ 3 min),
+a pitch deck PDF, and a live Vercel link.
 
-## Hard ownership rules (avoid edit collisions)
-- **You own:** `web-demo/`, `assets/demo/` (except seeded_ledger.json), `docs/video/`, `scripts/video/`.
-- **Pane 1 owns (do NOT do these, re-split 2026-11-27):** `app/`, `demo-upi/`, `backend/`, `README.md`, `LICENSE`, `.github/workflows/`, `docs/deck.md`, `docs/deck.pdf`, `docs/demo-script.md`, `docs/CHECKPOINT.md`, `docs/SPEC.md`, this brief.
-- **Never edit:** `app/`, `demo-upi/`, `settings.gradle.kts`, `build.gradle.kts`, `gradle/`, root Gradle files.
-- **Never run Gradle.** The Mac has 8 GB RAM; pane 1 runs the builds.
-- Commit only your own paths: `git add <your paths>`, never `git add -A`. Small commits, message prefix `[p2]`.
-- Never commit secrets. Keys live only in `.env` (gitignored).
-- To ask pane 1 something, append to `docs/HANDOFF.md` under "Questions for pane 1". Pane 1 answers there.
-- `docs/CHECKPOINT.md` is pane 1's file; don't edit it.
-- GitHub: repo is public at https://github.com/snackonodin/batao-kaise (gh is logged in). Push with
-  `git pull --rebase origin main && git push`. Never force-push. `seeded_ledger.json` in assets/demo is pane 1's.
-- Keys in `.env` (never open, print or commit it): `ELEVENLABS_API_KEY` is set. `HIGGSFIELD_API_KEY`/`_SECRET` are
-  not set yet. For video tooling, load `.env` inside your script's process; keys never go into the app or the web demo.
-- Never `git add` from outside `~/projects/BK`: the home folder `~` is also a git repo.
+The core workflow: tap mic → "Batao, kya karna hai?" → user speaks → app reads back → Haan/Nahi → the app does it, step by step.
+When asked, it can do three things (they are skills of ONE workflow, not separate products):
+1. **Udhaar**: "Ramesh ko do sau udhaar" / "Ramesh ne 100 de diye" / "Kiska kitna baaki hai?" / "Ramesh se paisa kaise loon?" (reminder text + UPI QR + mock WhatsApp share).
+2. **Bill**: "Bijli ka bill bharna hai" → sample bill with coloured boxes read aloud → guided mock Demo Pay (highlight moves Bills → Electricity → account → Continue → Pay; PIN screen hides the guide).
+3. **Atak gaya**: redacted summary → "Bhej doon?" → mock WhatsApp share to the trusted person.
+Schemes are cut. The Android code in `app/` stays in the repo as a reference, frozen.
 
-## Shared contracts (pane 1 reads these, so write them first, in this order)
-1. `assets/demo/sample_bill.png`: a fake electricity bill (1080x1440, Hindi + English labels).
-   Fields: Consumer/Account No `4512 7788 3301`, Amount `₹1,240`, Due date `15/12/2026`, name "Sunita Devi",
-   board "Demo Vidyut Vitran Nigam", header "DEMO BILL, NOT REAL". Make the text crisp so ML Kit can read it
-   (render HTML with headless Chrome, then screenshot). Also write `assets/demo/sample_bill.fields.json`
-   with the expected values and pixel boxes.
-2. `assets/demo/schemes.json`: 6 demo schemes (e.g. PM-Kisan-like, pension, ration, Ujjwala-like, scholarship,
-   health is EXCLUDED, so no health schemes). Each: id, name_hi, name_en, rules (age/land/income/family/state),
-   documents[], label "demo, verify on official site".
-3. `assets/demo/seeded_ledger.json`: DONE by pane 1 (format is parsed by the app). Do not edit.
-4. `assets/demo/demo_form.html`: follow the exact contract in `docs/HANDOFF.md` (ids, headings, 3 pages).
-   Copy it to `web-demo/public/` too. Report the deployed Vercel URL in HANDOFF.md.
-5. (Test phrases are owned by pane 1, inside `app/`. Skip.)
-   Note: pane 1's app module bundles everything in `assets/demo/` as Android assets, so keep file names stable.
-   Demo Pay's account number is `451277883301` (printed as `4512 7788 3301`); the bill must match it.
+## Ownership
+- **Pane 1 (other session):** `web-demo/src/engine/**` (all logic: normalizer, numbers, intents, dialogue state machine, ledger, bill parser, redactor, guide), its tests, `docs/deck.*`, `docs/demo-script.md`, `README.md`, `.github/`, `app/`, `demo-upi/`, `docs/CHECKPOINT.md`, this brief. Pane 1 also made the scaffold (`web-demo/package.json`, `vite.config.ts`, `tsconfig.json`).
+- **You (pane 2):** everything else in `web-demo/` (`src/ui/**`, `src/App.tsx`, `src/main.tsx`, `src/styles.css`, `public/**`, `index.html`), `assets/demo/sample_bill.png` (+ copy to `web-demo/public/`), Vercel deploy, `docs/video/**`, `scripts/video/**`.
+- Need a dependency? Add it yourself with `npm i` in web-demo (package.json is shared, pull first). Commit prefix `[p2]`.
+- Never edit pane 1's files. Questions go in `docs/HANDOFF.md`. Push with `git pull --rebase origin main && git push`. Never force-push.
+- Never run Gradle. Never `git add` from outside `~/projects/BK` (the home folder is also a git repo).
+- Keys in `.env` (never open, print or commit it): `ELEVENLABS_API_KEY` is set. No Higgsfield key yet.
 
-## PRIORITY CHANGE (user decision): no Android device. Testing and the demo video use the web demo on Vercel.
-So after the shared contracts, your order is:
-6. `web-demo/` (spec section 13): Vite + React, phone-frame simulation. It is now the main demo, so make it solid:
-   core loop with read-back + Haan/Nahi, Web Speech API hi-IN mic + "type instead" box, bill reader with boxes on sample_bill.png,
-   udhaar add/balance/reminder draft with UPI QR, mock Demo Pay with the moving guide highlight (Bills -> Electricity -> account -> Pay),
-   Rescue Circle with redaction. Port the rules from the Kotlin sources (read-only for you): `app/src/main/java/com/bataokaise/app/voice/*.kt`,
-   `intent/Intent.kt`, `rescue/Redactor.kt`, `debug/TestPhrases.kt` (all 20 phrases must pass in a JS test too), journeys in `app/src/main/assets/journeys/`.
-   Banner: "Web demo; the real app is Android". Deploy to Vercel (`npx vercel login` once; the user runs it if needed). Write the URL in HANDOFF.md.
-7. Video (see below), after the web demo works.
+## The engine contract (read `web-demo/src/engine/index.ts`; pane 1 keeps it stable)
+- `const a = createAssistant()`; `a.subscribe(state => render(state))`; `a.state`.
+- The engine never touches the DOM, mic or speaker. It emits `state.say` (`{id, text}`) whenever it wants a line spoken:
+  you speak it with `speechSynthesis` (hi-IN, rate 0.9; fall back to any voice) and call `a.spoken(id)` when the utterance ends.
+- Input events you call: `a.micTapped()`, `a.partial(text)`, `a.heard(text)` (final transcript), `a.silence()`, `a.noMatch()`,
+  `a.yes()`, `a.no()`, `a.done()`, `a.picture('bill'|'udhaar'|'madad')`, `a.payTap(elementId)` (user tapped something in mock Demo Pay),
+  `a.payType(elementId, value)`, `a.billTap(field)`, `a.share(target)`, `a.reset()`.
+- `state.listen === true` means: start Web Speech recognition (hi-IN, interimResults) now. "Type instead" box always calls `a.heard(text)`.
+- `state.view` tells you what to show: `home | bill | pay | ledger | reminder | rescue`, with its data. For `pay`, `state.view.highlight`
+  is the element id to outline (or null), and `state.view.screen` is which mock Demo Pay screen to show. Use exactly these element ids:
+  `bills_tile`, `electricity_tile`, `account_field`, `continue_btn`, `pay_btn`, `pin_field`, `pin_submit`, `back_btn`. Demo Pay never moves
+  screens by itself: when the user taps, call `a.payTap(id)` and render the screen the engine returns.
+- Until pane 1 lands the engine, build against a stub with the same shape.
 
-## Video (after the web demo works)
-- Follow `docs/demo-script.md` (pane 1 writes it; under 3:00, English captions).
-- Footage: record the deployed web demo in Chrome (e.g. headless Chrome + puppeteer screencast, or ffmpeg avfoundation screen capture).
-  Label it as the web demo on screen. Never present AI footage or the web demo as the real Android app.
-- Voiceover with **ElevenLabs** (key in `.env` as ELEVENLABS_API_KEY; the user chose this):
-  1. Run `curl -fsSL -o /tmp/el-skills.tgz https://github.com/elevenlabs/skills/archive/refs/heads/main.tar.gz` into a temp dir outside the repo, extract, and read the text-to-speech skill's SKILL.md + references before writing code.
-  2. Install the SDK only in `scripts/video/` (its own package.json or requirements.txt), load `.env` in the script process, never print the key.
-  3. Generate Hindi/Hinglish narration + the user's spoken lines into `docs/video/audio/` (gitignored raw is fine; commit only small final files).
-  4. Then run `npx -y @elevenlabs/cli@latest onboard check --written --env-path .env` and follow what it prints.
-- Optional Higgsfield intro clip only if `HIGGSFIELD_API_KEY` appears in `.env`; caption it "illustrative".
-- Final cut with ffmpeg -> `docs/video/batao-kaise-demo.mp4`.
+## Your order
+1. `assets/demo/sample_bill.png` (1080x1440, crisp, fake): header "DEMO BILL, NOT REAL", "Demo Vidyut Vitran Nigam", "Sunita Devi",
+   "Consumer No / उपभोक्ता संख्या" + `4512 7788 3301` (top right), "Amount Payable / देय राशि" + `₹ 1,240.00`, "Due Date / अंतिम तिथि: 15/12/2026".
+   Render HTML in headless Chrome and screenshot. Write `web-demo/public/sample_bill.ocr.json`: an array of `{text, l, t, r, b}`
+   lines with pixel boxes for every text line on the bill (the engine's parser runs on these: the web demo's OCR is precomputed, and the UI must say so).
+2. UI: phone frame (looks like an Android phone, 360x780), warm off-white `#FBF7F0`, one deep green `#1F5E3B`, Mukta font (Google Fonts),
+   buttons ≥ 56px, big mic with pulsing ring, big Hinglish bubble, live transcript, Haan/Nahi, picture buttons, "Ho gaya", "type instead" box.
+   Banner above the phone: "Web demo; the real app is Android". A side panel (desktop) shows the English caption of what is happening, for judges.
+3. Mock Demo Pay screens (Home, Bills, Electricity, Pay, PIN, Success), each labelled "DEMO, no real money", with the pulsing highlight + arrow.
+   Bill view with coloured boxes over the image (Account no. blue, Rakam green, Aakhri tareekh orange, grey "Saaf nahi").
+   Reminder view with text + QR (`qrcode` package) + a mock WhatsApp share sheet. Rescue view with the redacted summary, editable.
+4. Deploy to Vercel (`npx vercel --prod` from web-demo; if login is needed, ask the user to run `! npx vercel login`). Put the URL in HANDOFF.md.
+5. Video, per `docs/demo-script.md`: record the deployed demo (puppeteer screencast or ffmpeg), ElevenLabs voices, English captions, ffmpeg cut
+   → `docs/video/batao-kaise-demo.mp4`. ElevenLabs: download its skills to a temp dir outside the repo
+   (`curl -fsSL https://github.com/elevenlabs/skills/archive/refs/heads/main.tar.gz | tar -xz -C /tmp/el-skills`), read the text-to-speech
+   SKILL.md + references first, install the SDK only in `scripts/video/`, load `.env` inside the script, never print the key. Afterwards run
+   `npx -y @elevenlabs/cli@latest onboard check --written --env-path .env` and follow what it prints.
+   The lower-third "Web demo simulating the Android app" stays on screen. AI footage only for an optional intro, captioned "Illustrative".
