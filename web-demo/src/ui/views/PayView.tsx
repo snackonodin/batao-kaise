@@ -16,7 +16,7 @@ export function PayView({ a, v }: { a: Assistant; v: V }) {
     <div className={`pay pay-${v.screen}`}>
       <div className="pay-bar">
         {v.screen !== "home" && v.screen !== "success"
-          ? <Target highlight={hl} id="back_btn"><button className="pay-back" onClick={() => tap("back_btn")} aria-label="Back">Back</button></Target>
+          ? <Target highlight={hl} id="back_btn" arrow="up"><button className="pay-back" onClick={() => tap("back_btn")} aria-label="Back">Back</button></Target>
           : <span className="pay-logo">Demo<b>Pay</b></span>}
         <span className="pay-title">{TITLE[v.screen]}</span>
       </div>
@@ -52,7 +52,7 @@ export function PayView({ a, v }: { a: Assistant; v: V }) {
           <div className="field-ro"><span>Board</span><b>Demo Vidyut Vitran Nigam</b></div>
           <label className="field" htmlFor="account_field">
             <span>Consumer / Account number</span>
-            <Target highlight={hl} id="account_field" block>
+            <Target highlight={hl} id="account_field" block arrow="side">
               <input id="account_field" inputMode="numeric" autoComplete="off" placeholder="12 ank ka number"
                 value={v.accountTyped.replace(/(\d{4})(?=\d)/g, "$1 ")}
                 onFocus={() => tap("account_field")}
@@ -62,7 +62,7 @@ export function PayView({ a, v }: { a: Assistant; v: V }) {
           {v.accountOk
             ? <div className="consumer"><span>Sunita Devi</span><b>Bill {rupees(v.amount)}</b><small>Due 15/12/2026</small></div>
             : v.accountTyped.length === 12 && <p className="field-err">Ye number nahi mila. Bill wala number daaliye.</p>}
-          <Target highlight={hl} id="continue_btn" block>
+          <Target highlight={hl} id="continue_btn" block arrow="side">
             <button className="pay-primary" disabled={!v.accountOk} onClick={() => tap("continue_btn")}>Continue</button>
           </Target>
         </>}
@@ -73,7 +73,7 @@ export function PayView({ a, v }: { a: Assistant; v: V }) {
             <small>Sunita Devi · {v.account.replace(/(\d{4})(?=\d)/g, "$1 ")}</small>
             <b>{rupees(v.amount)}</b>
           </div>
-          <Target highlight={hl} id="pay_btn" block>
+          <Target highlight={hl} id="pay_btn" block arrow="side">
             <button className="pay-primary" onClick={() => tap("pay_btn")}>Pay {rupees(v.amount)}</button>
           </Target>
         </>}
@@ -82,7 +82,7 @@ export function PayView({ a, v }: { a: Assistant; v: V }) {
 
         {v.screen === "success" && (
           <div className="success">
-            <span className="tick"><Icon name="check" size={44} stroke={2.6} /></span>
+            <span className="tick" aria-hidden="true"><Icon name="check" size={44} stroke={2.6} /></span>
             <b>{rupees(v.amount)} paid</b>
             <span>Demo Vidyut Vitran Nigam</span>
             <small className="success-note">Demo payment. Koi paisa nahi gaya.</small>
@@ -109,7 +109,7 @@ function Tile({ id, icon, label, onTap, hl }: { id: string; icon: string; label:
   return <Target highlight={hl} id={id} block><button className="tile" onClick={() => onTap(id)}><Icon name={icon} size={26} />{label}</button></Target>;
 }
 function ListItem({ id, icon, label, onTap, hl }: { id: string; icon: string; label: string; onTap(id: string): void; hl: string | null }) {
-  return <li><Target highlight={hl} id={id} block><button className="list-item" onClick={() => onTap(id)}><Icon name={icon} size={22} /><span className="li-label">{label}</span><Icon name="chevron" size={20} /></button></Target></li>;
+  return <li><Target highlight={hl} id={id} block arrow="side"><button className="list-item" onClick={() => onTap(id)}><Icon name={icon} size={22} /><span className="li-label">{label}</span><Icon name="chevron" size={20} /></button></Target></li>;
 }
 
 /** The guide hides here: no highlight, no arrow. Only the PIN's length reaches the engine. */

@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "web-demo/tools/bill/sample_bill.html"
+        ],
+        "createdAt": "2026-11-26T19:57:43.453Z",
+        "reason": "Claude: printed-bill fixture rendered to PNG for OCR demo, not app UI; rendered image checked visually, no text touches a border"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "web-demo/src/**"
+        ],
+        "createdAt": "2026-11-26T20:28:36.211Z",
+        "reason": "user brief: warm off-white #FBF7F0 paper is the pinned palette"
+      }
+    ]
+  }
+}

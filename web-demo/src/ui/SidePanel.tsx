@@ -12,7 +12,7 @@ const TRY: { text: string; en: string }[] = [
 ];
 
 const PHASE: Record<State["phase"], string> = {
-  idle: "Waiting", listening: "Listening", processing: "Understanding", speaking: "Speaking", guiding: "Guiding",
+  idle: "Ready", listening: "Listening", processing: "Understanding", speaking: "Speaking", guiding: "Guiding",
 };
 
 export function SidePanel({ a, s, onReset }: { a: Assistant; s: State; onReset(): void }) {

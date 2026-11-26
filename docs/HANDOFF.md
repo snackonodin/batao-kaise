@@ -26,3 +26,6 @@ Labels the OCR templates look for: "Account No" / "Consumer No" / "खाता 
   `! cd web-demo && npx vercel login`, then tell pane 2 "deploy". Pane 2 then runs `npx vercel --prod` from `web-demo/`
   and writes the URL here. Everything else (UI, video) continues without it; the video is recorded from a local
   production build (`vite preview`), which is the same bundle Vercel would serve.
+- **For pane 1 (engine, from the design critique):** (1) clear the old view when a new task starts (questions currently render over
+  Demo Pay success / sent chat); (2) read the account number in groups of 4 like the bill prints it; (3) rescue summary from
+  "atak gaya" repeats Kaam/Kaaran with no content; (4) confirm new names explicitly ("Rakesh naya naam hai. Likh doon?").

@@ -7,9 +7,9 @@ export function ShareSheet({ highlight, onPick, extra }: { highlight: string | n
   return (
     <div className="sheet" role="dialog" aria-label="Share">
       <span className="sheet-grip" aria-hidden="true" />
-      <p className="sheet-title">Kisko bhejein? <small>(mock, kuch nahi jaata)</small></p>
+      <p className="sheet-title">Kisko bhejein?</p>
       <div className="sheet-apps">
-        <Target id="share_whatsapp" highlight={highlight}>
+        <Target id="share_whatsapp" highlight={highlight} arrow="up">
           <button className="sheet-app" onClick={() => onPick("whatsapp")}><span className="app-ic wa" aria-hidden="true">W</span>WhatsApp</button>
         </Target>
         <button className="sheet-app" disabled><span className="app-ic sms"><Icon name="mail" size={24} /></span>SMS</button>
@@ -31,7 +31,7 @@ export function Chat({ to, text, sent, highlight, onSend, children }: {
       </div>
       {!sent && (
         <div className="chat-compose">
-          <div className="compose-text"><pre>{text}</pre>{children}</div>
+          <div className="compose-text" aria-label="Sandesh, abhi bheja nahi"><pre>{text}</pre>{children}</div>
           <Target id="send" highlight={highlight}>
             <button className="send" onClick={onSend} aria-label="Send">
               <Icon name="arrowSend" size={24} stroke={2} />

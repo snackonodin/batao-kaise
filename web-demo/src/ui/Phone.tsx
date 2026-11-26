@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Assistant, State } from "../engine";
-import { MIC_SUPPORTED } from "./voice";
+import { MIC_SUPPORTED, RECORDING } from "./voice";
 import { Icon } from "./Icon";
 import { HomeView } from "./views/HomeView";
 import { BillView } from "./views/BillView";
@@ -35,9 +35,14 @@ export function Phone({ a, s, micError, clearMicError }: Props) {
 
 function Dock({ a, s, micError, clearMicError }: Props) {
   const [typed, setTyped] = useState("");
-  const [showType, setShowType] = useState(!MIC_SUPPORTED);
+  const [showType, setShowType] = useState(!MIC_SUPPORTED && !RECORDING);
   const listening = s.phase === "listening";
-  const hideGuide = s.view.kind === "pay" && s.view.sensitive;
+  const pay = s.view.kind === "pay" ? s.view : null;
+  const guiding = !!pay;
+  // "Ho gaya" is a quiet fallback while guiding; never on the PIN screen (the guide steps back there) or after success.
+  const showDone = s.showDone && !s.showYesNo && !!pay && !pay.sensitive && pay.screen !== "success";
+  // "Ramesh Kumar ya Ramesh Yadav?": show the options as buttons too, so nobody has to remember a full name.
+  const pick = !s.showYesNo && !s.showPictures ? /^([^?]+?) ya ([^?]+?)\?$/.exec(s.bubble) : null;
 
   const send = () => {
     const t = typed.trim(); if (!t) return;
@@ -46,14 +51,14 @@ function Dock({ a, s, micError, clearMicError }: Props) {
   const mic = () => { clearMicError(); a.micTapped(); };
 
   return (
-    <section className={`dock${hideGuide ? " dock-quiet" : ""}`} aria-live="polite">
-      <p className={`bubble${s.phase === "speaking" ? " is-speaking" : ""}`}>{s.bubble}</p>
+    <section className={`dock${pay?.sensitive ? " dock-quiet" : ""}${guiding ? " dock-guiding" : ""}`} aria-live="polite">
+      <p className={`bubble${s.phase === "speaking" ? " is-speaking" : ""}${s.bubble.length > 78 ? " is-long" : ""}`}>{s.bubble}</p>
       <p className="live" aria-label="Aapne kaha">
-        {listening && !s.live ? <span className="live-hint">Sun raha hoon…</span> : s.live ? <>“{s.live}”</> : " "}
+        {listening && !s.live ? <span className="live-hint">Sun raha hoon…</span> : s.live ? <>“{s.live}”</> : "\u00a0"}
       </p>
       {micError && <p className="mic-error">{micError}</p>}
 
-      {(s.showYesNo || s.showPictures || s.showDone) && (
+      {(s.showYesNo || s.showPictures || pick) && (
         <div className="choices">
           {s.showYesNo && <>
             <button className="btn btn-yes" onClick={() => a.yes()}>Haan</button>
@@ -64,7 +69,9 @@ function Dock({ a, s, micError, clearMicError }: Props) {
             <button className="pic" onClick={() => a.picture("udhaar")}><Icon name="book" size={30} />Udhaar</button>
             <button className="pic" onClick={() => a.picture("madad")}><Icon name="help" size={30} />Phone madad</button>
           </>}
-          {s.showDone && !s.showYesNo && <button className="btn btn-done" onClick={() => a.done()}>Ho gaya</button>}
+          {pick && [pick[1], pick[2]].map((o) => (
+            <button key={o} className="btn btn-pick" onClick={() => { clearMicError(); a.heard(o); }}>{o}</button>
+          ))}
         </div>
       )}
 
@@ -74,9 +81,9 @@ function Dock({ a, s, micError, clearMicError }: Props) {
         </button>
         <button className={`mic${listening ? " is-listening" : ""}`} onClick={mic} aria-label={listening ? "Sunna band karein" : "Mic dabaiye aur boliye"}>
           <span className="mic-ring" aria-hidden="true" />
-          <Icon name="mic" size={34} stroke={2.2} />
+          <Icon name="mic" size={guiding ? 28 : 34} stroke={2.2} />
         </button>
-        <span className="mic-spacer" />
+        {showDone ? <button className="done-link" onClick={() => a.done()}>Ho gaya</button> : <span className="mic-spacer" />}
       </div>
 
       {showType && (

@@ -12,6 +12,8 @@ type Rec = {
   start(): void; abort(): void;
 };
 const RecCtor: (new () => Rec) | undefined = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
+/** ?rec=1: screen recording; the scripted "user" speaks through the engine, so the type box stays closed. */
+export const RECORDING = params.get("rec") === "1";
 export const MIC_SUPPORTED = !!RecCtor && params.get("mic") !== "0";
 
 let hindiVoice: SpeechSynthesisVoice | null | undefined;
@@ -40,7 +42,14 @@ export function connectVoice(a: Assistant, hooks: VoiceHooks): () => void {
     clearTimeout(fallback);
     let timer: number | undefined, finished = false;
     const finish = () => { if (finished) return; finished = true; clearTimeout(timer); a.spoken(s.id); };
-    if (!TTS_ON) { fallback = timer = window.setTimeout(finish, estimateMs(s.text, s.slow)); return; }
+    if (!TTS_ON) {
+      // Recording hooks (scripts/video): hold each line exactly as long as its dubbed audio, and log when it starts.
+      const w = window as any;
+      w.__onSay?.(s.text);
+      const ms = w.__sayMs?.(s.text) ?? estimateMs(s.text, s.slow);
+      fallback = timer = window.setTimeout(finish, ms);
+      return;
+    }
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(s.text);
     u.lang = "hi-IN"; u.rate = s.slow ? 0.7 : 0.9;
