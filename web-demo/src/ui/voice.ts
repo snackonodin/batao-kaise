@@ -96,6 +96,8 @@ export function connectVoice(a: Assistant, hooks: VoiceHooks): () => void {
     billLoading = true;
     try {
       const lines = await (await fetch("/sample_bill.ocr.json")).json();
+      // Let "Bill dekh raha hoon" finish before the fields are read out.
+      await new Promise<void>((done) => { const off = a.subscribe((s) => { if (!s.say) { queueMicrotask(() => off()); done(); } }); });
       a.billOcr(lines, 1080, 1440);
     } finally { billLoading = false; }
   };

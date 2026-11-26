@@ -29,3 +29,6 @@ Labels the OCR templates look for: "Account No" / "Consumer No" / "खाता 
 - **For pane 1 (engine, from the design critique):** (1) clear the old view when a new task starts (questions currently render over
   Demo Pay success / sent chat); (2) read the account number in groups of 4 like the bill prints it; (3) rescue summary from
   "atak gaya" repeats Kaam/Kaaran with no content; (4) confirm new names explicitly ("Rakesh naya naam hai. Likh doon?").
+- **Video done:** `docs/video/batao-kaise-demo.mp4` (2:59), recorded from the production build with ElevenLabs voices.
+  How it was made and how to rebuild it: `docs/video/README.md`. Not yet uploaded to YouTube (needs the user's account).
+- `npx @elevenlabs/cli onboard check --written --env-path .env` was blocked by pane 2's permission settings; the user can run it.
