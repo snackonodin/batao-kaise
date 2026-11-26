@@ -20,10 +20,9 @@ The full product spec is in `docs/SPEC.md`. Read it first.
 2. `assets/demo/schemes.json`: 6 demo schemes (e.g. PM-Kisan-like, pension, ration, Ujjwala-like, scholarship,
    health is EXCLUDED, so no health schemes). Each: id, name_hi, name_en, rules (age/land/income/family/state),
    documents[], label "demo, verify on official site".
-3. `assets/demo/seeded_ledger.json`: 6 fake customers with udhaar entries.
-4. `assets/demo/demo_form.html`: a self-contained scheme application form (name, age, Aadhaar-like field,
-   bank account, mobile, OTP field). Labelled DEMO. It is also deployed with the web demo so a Chrome
-   Custom Tab can open it at `<web-demo-url>/demo_form.html`. Give every input a stable `id` and `aria-label`.
+3. `assets/demo/seeded_ledger.json`: DONE by pane 1 (format is parsed by the app). Do not edit.
+4. `assets/demo/demo_form.html`: follow the exact contract in `docs/HANDOFF.md` (ids, headings, 3 pages).
+   Copy it to `web-demo/public/` too. Report the deployed Vercel URL in HANDOFF.md.
 5. (Test phrases are owned by pane 1, inside `app/`. Skip.)
    Note: pane 1's app module bundles everything in `assets/demo/` as Android assets, so keep file names stable.
    Demo Pay's account number is `451277883301` (printed as `4512 7788 3301`); the bill must match it.

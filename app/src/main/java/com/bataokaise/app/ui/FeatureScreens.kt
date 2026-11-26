@@ -12,6 +12,10 @@ object FeatureScreens {
     @Composable
     fun Render(route: Route, activity: MainActivity) {
         val app = BataoApp.instance
+        when (route) {
+            Route.BILL -> { com.bataokaise.app.bill.BillScreen(); return }
+            else -> {}
+        }
         val title = when (route) {
             Route.BILL -> "Bill padho"
             Route.LEDGER -> "Udhaar khata"
