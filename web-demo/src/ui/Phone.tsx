@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Assistant, State } from "../engine";
 import { MIC_SUPPORTED } from "./voice";
+import { Icon } from "./Icon";
 import { HomeView } from "./views/HomeView";
 import { BillView } from "./views/BillView";
 import { PayView } from "./views/PayView";
@@ -59,9 +60,9 @@ function Dock({ a, s, micError, clearMicError }: Props) {
             <button className="btn btn-no" onClick={() => a.no()}>Nahi</button>
           </>}
           {s.showPictures && <>
-            <button className="pic" onClick={() => a.picture("bill")}><span className="pic-ic" aria-hidden="true">🧾</span>Bill</button>
-            <button className="pic" onClick={() => a.picture("udhaar")}><span className="pic-ic" aria-hidden="true">📒</span>Udhaar</button>
-            <button className="pic" onClick={() => a.picture("madad")}><span className="pic-ic" aria-hidden="true">🙋</span>Phone madad</button>
+            <button className="pic" onClick={() => a.picture("bill")}><Icon name="bill" size={30} />Bill</button>
+            <button className="pic" onClick={() => a.picture("udhaar")}><Icon name="book" size={30} />Udhaar</button>
+            <button className="pic" onClick={() => a.picture("madad")}><Icon name="help" size={30} />Phone madad</button>
           </>}
           {s.showDone && !s.showYesNo && <button className="btn btn-done" onClick={() => a.done()}>Ho gaya</button>}
         </div>
@@ -69,11 +70,11 @@ function Dock({ a, s, micError, clearMicError }: Props) {
 
       <div className="mic-row">
         <button className={`type-toggle${showType ? " on" : ""}`} onClick={() => setShowType(!showType)} aria-label="Likhkar boliye" aria-pressed={showType}>
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/><path d="M6 10h1M9 10h1M12 10h1M15 10h1M18 10h0.5M7.5 14h9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+          <Icon name="keys" size={24} />
         </button>
         <button className={`mic${listening ? " is-listening" : ""}`} onClick={mic} aria-label={listening ? "Sunna band karein" : "Mic dabaiye aur boliye"}>
           <span className="mic-ring" aria-hidden="true" />
-          <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+          <Icon name="mic" size={34} stroke={2.2} />
         </button>
         <span className="mic-spacer" />
       </div>

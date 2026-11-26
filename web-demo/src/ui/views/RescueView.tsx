@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Assistant, View } from "../../engine";
 import { Chat, ShareSheet } from "./Share";
+import { Icon } from "../Icon";
 
 type V = Extract<View, { kind: "rescue" }>;
 
@@ -18,7 +19,7 @@ export function RescueView({ a, v }: { a: Assistant; v: V }) {
     return (
       <div className="rescue">
         <div className="card">
-          <p className="card-kicker">AI se poochne ke liye sawaal</p>
+          <h2 className="card-title">AI se poochne ke liye sawaal</h2>
           <pre className="card-text">{v.aiQuestion}</pre>
           <button className="btn btn-ghost" onClick={copy}>{copied ? "Copy ho gaya" : "Copy karein"}</button>
         </div>
@@ -29,7 +30,7 @@ export function RescueView({ a, v }: { a: Assistant; v: V }) {
   return (
     <div className="rescue">
       <div className="card">
-        <p className="card-kicker">{v.to} ko jaane wala sandesh</p>
+        <h2 className="card-title">{v.to} ko jaane wala sandesh</h2>
         <textarea className="card-edit" value={draft} rows={8} aria-label="Sandesh badliye"
           onChange={(e) => setDraft(e.target.value)} onBlur={() => draft !== v.summary && a.editRescue(draft)} />
         {removed.length > 0 && (
@@ -41,7 +42,7 @@ export function RescueView({ a, v }: { a: Assistant; v: V }) {
       </div>
       {v.stage === "share" && (
         <ShareSheet highlight={v.highlight} onPick={(t) => a.share(t)}
-          extra={<button className="sheet-app" onClick={() => a.share("ai")}><span className="app-ic ai" aria-hidden="true">?</span>AI se poochein</button>} />
+          extra={<button className="sheet-app" onClick={() => a.share("ai")}><span className="app-ic ai"><Icon name="ask" size={24} /></span>AI se poochein</button>} />
       )}
     </div>
   );

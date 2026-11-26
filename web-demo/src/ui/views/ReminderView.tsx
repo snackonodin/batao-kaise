@@ -20,7 +20,7 @@ export function ReminderView({ a, v }: { a: Assistant; v: V }) {
   return (
     <div className="reminder">
       <div className="card">
-        <p className="card-kicker">Yaad dilane ka sandesh</p>
+        <h2 className="card-title">Yaad dilane ka sandesh</h2>
         <pre className="card-text">{v.text}</pre>
         <div className="qr-wrap">{qrImg}<span>UPI QR · ₹{v.amount.toLocaleString("en-IN")}<small>demo UPI id</small></span></div>
       </div>

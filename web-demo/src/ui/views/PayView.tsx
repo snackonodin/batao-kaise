@@ -2,7 +2,8 @@
 // screens change only when the user taps (a.payTap), never by themselves.
 import { useEffect, useState } from "react";
 import type { Assistant, View } from "../../engine";
-import { DemoTag, Target } from "../Target";
+import { Target } from "../Target";
+import { Icon } from "../Icon";
 
 type V = Extract<View, { kind: "pay" }>;
 const rupees = (n: number) => `₹${n.toLocaleString("en-IN")}`;
@@ -15,11 +16,11 @@ export function PayView({ a, v }: { a: Assistant; v: V }) {
     <div className={`pay pay-${v.screen}`}>
       <div className="pay-bar">
         {v.screen !== "home" && v.screen !== "success"
-          ? <Target highlight={hl} id="back_btn"><button className="pay-back" onClick={() => tap("back_btn")} aria-label="Back">‹ Back</button></Target>
-          : <span className="pay-logo">Demo Pay</span>}
+          ? <Target highlight={hl} id="back_btn"><button className="pay-back" onClick={() => tap("back_btn")} aria-label="Back">Back</button></Target>
+          : <span className="pay-logo">Demo<b>Pay</b></span>}
         <span className="pay-title">{TITLE[v.screen]}</span>
-        <DemoTag />
       </div>
+      <div className="pay-demo" role="note">DEMO APP · no real money</div>
 
       <div className="pay-body">
         {v.screen === "home" && <>
@@ -28,22 +29,22 @@ export function PayView({ a, v }: { a: Assistant; v: V }) {
             <b>Demo balance {rupees(5000)}</b>
           </div>
           <div className="tiles">
-            <Tile id="send_tile" icon="↗" label="Paise bhejein" onTap={tap} hl={hl} />
-            <Tile id="scan_tile" icon="▦" label="QR scan" onTap={tap} hl={hl} />
-            <Tile id="recharge_tile" icon="📱" label="Recharge" onTap={tap} hl={hl} />
-            <Tile id="bills_tile" icon="🧾" label="Bills" onTap={tap} hl={hl} />
-            <Tile id="balance_tile" icon="🏦" label="Balance" onTap={tap} hl={hl} />
-            <Tile id="history_tile" icon="🕘" label="History" onTap={tap} hl={hl} />
+            <Tile id="send_tile" icon="send" label="Paise bhejein" onTap={tap} hl={hl} />
+            <Tile id="scan_tile" icon="scan" label="QR scan" onTap={tap} hl={hl} />
+            <Tile id="recharge_tile" icon="phone" label="Recharge" onTap={tap} hl={hl} />
+            <Tile id="bills_tile" icon="bill" label="Bills" onTap={tap} hl={hl} />
+            <Tile id="balance_tile" icon="bank" label="Balance" onTap={tap} hl={hl} />
+            <Tile id="history_tile" icon="clock" label="History" onTap={tap} hl={hl} />
           </div>
         </>}
 
         {v.screen === "bills" && (
           <ul className="list">
-            <ListItem id="electricity_tile" icon="⚡" label="Electricity / Bijli" onTap={tap} hl={hl} />
-            <ListItem id="water_tile" icon="💧" label="Water / Paani" onTap={tap} hl={hl} />
-            <ListItem id="gas_tile" icon="🔥" label="Gas cylinder" onTap={tap} hl={hl} />
-            <ListItem id="dth_tile" icon="📡" label="DTH / TV" onTap={tap} hl={hl} />
-            <ListItem id="mobile_tile" icon="📞" label="Mobile postpaid" onTap={tap} hl={hl} />
+            <ListItem id="electricity_tile" icon="bolt" label="Electricity / Bijli" onTap={tap} hl={hl} />
+            <ListItem id="water_tile" icon="drop" label="Water / Paani" onTap={tap} hl={hl} />
+            <ListItem id="gas_tile" icon="flame" label="Gas cylinder" onTap={tap} hl={hl} />
+            <ListItem id="dth_tile" icon="tv" label="DTH / TV" onTap={tap} hl={hl} />
+            <ListItem id="mobile_tile" icon="phone" label="Mobile postpaid" onTap={tap} hl={hl} />
           </ul>
         )}
 
@@ -81,18 +82,18 @@ export function PayView({ a, v }: { a: Assistant; v: V }) {
 
         {v.screen === "success" && (
           <div className="success">
-            <span className="tick" aria-hidden="true">✓</span>
+            <span className="tick"><Icon name="check" size={44} stroke={2.6} /></span>
             <b>{rupees(v.amount)} paid</b>
             <span>Demo Vidyut Vitran Nigam</span>
-            <DemoTag>DEMO payment: no money moved</DemoTag>
+            <small className="success-note">Demo payment. Koi paisa nahi gaya.</small>
             <button className="pay-secondary" onClick={() => tap("home_btn")}>Home</button>
           </div>
         )}
 
         {v.screen === "other" && (
           <div className="wrong">
-            <b>Yahan aana nahi tha</b>
-            <p>Ye galat screen hai. Upar “Back” dabaiye.</p>
+            <label className="field"><span>Mobile number ya UPI ID</span><input disabled placeholder="98xxxxxx10" /></label>
+            <button className="pay-primary" disabled>Aage badhein</button>
           </div>
         )}
       </div>
@@ -105,10 +106,10 @@ const TITLE: Record<V["screen"], string> = {
 };
 
 function Tile({ id, icon, label, onTap, hl }: { id: string; icon: string; label: string; onTap(id: string): void; hl: string | null }) {
-  return <Target highlight={hl} id={id} block><button className="tile" onClick={() => onTap(id)}><span aria-hidden="true">{icon}</span>{label}</button></Target>;
+  return <Target highlight={hl} id={id} block><button className="tile" onClick={() => onTap(id)}><Icon name={icon} size={26} />{label}</button></Target>;
 }
 function ListItem({ id, icon, label, onTap, hl }: { id: string; icon: string; label: string; onTap(id: string): void; hl: string | null }) {
-  return <li><Target highlight={hl} id={id} block><button className="list-item" onClick={() => onTap(id)}><span aria-hidden="true">{icon}</span>{label}<i aria-hidden="true">›</i></button></Target></li>;
+  return <li><Target highlight={hl} id={id} block><button className="list-item" onClick={() => onTap(id)}><Icon name={icon} size={22} /><span className="li-label">{label}</span><Icon name="chevron" size={20} /></button></Target></li>;
 }
 
 /** The guide hides here: no highlight, no arrow. Only the PIN's length reaches the engine. */

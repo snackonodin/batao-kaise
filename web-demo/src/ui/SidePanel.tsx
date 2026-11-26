@@ -18,7 +18,7 @@ const PHASE: Record<State["phase"], string> = {
 export function SidePanel({ a, s, onReset }: { a: Assistant; s: State; onReset(): void }) {
   return (
     <aside className="side" aria-label="For judges: what is happening">
-      <p className="side-kicker"><span className={`dot dot-${s.phase}`} aria-hidden="true" />{PHASE[s.phase]}</p>
+      <p className="status"><span className={`dot dot-${s.phase}`} aria-hidden="true" />{PHASE[s.phase]}</p>
       <p className="side-caption" aria-live="polite">{s.caption}</p>
       {s.lastIntent && <p className="side-intent">Understood as <code>{s.lastIntent}</code></p>}
 

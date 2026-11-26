@@ -12,8 +12,3 @@ export function Target({ id, highlight, children, block = false, arrow = "down" 
     </span>
   );
 }
-
-/** Small "DEMO" tag every mock screen carries. */
-export function DemoTag({ children = "DEMO, no real money" }: { children?: ReactNode }) {
-  return <span className="demo-tag">{children}</span>;
-}

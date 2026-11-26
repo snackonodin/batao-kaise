@@ -12,7 +12,7 @@ export function HomeView({ a }: { a: Assistant }) {
           <p>Sunita Kirana Store</p>
         </div>
       </div>
-      <p className="home-lead">Neeche mic dabaiye aur apni bhasha mein boliye.</p>
+      <p className="home-lead">Mic dabaiye. Boliye kya karna hai. Main dikhaunga kaise.</p>
       <h2 className="home-sub">Aise bol sakte hain</h2>
       <ul className="examples">
         {EXAMPLES.map((t) => (

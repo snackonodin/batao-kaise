@@ -1,6 +1,7 @@
 // Mock share sheet and mock chat, shared by the reminder and rescue views. Nothing leaves the browser.
 import type { ReactNode } from "react";
 import { Target } from "../Target";
+import { Icon } from "../Icon";
 
 export function ShareSheet({ highlight, onPick, extra }: { highlight: string | null; onPick(t: "whatsapp" | "cancel"): void; extra?: ReactNode }) {
   return (
@@ -11,7 +12,7 @@ export function ShareSheet({ highlight, onPick, extra }: { highlight: string | n
         <Target id="share_whatsapp" highlight={highlight}>
           <button className="sheet-app" onClick={() => onPick("whatsapp")}><span className="app-ic wa" aria-hidden="true">W</span>WhatsApp</button>
         </Target>
-        <button className="sheet-app" disabled><span className="app-ic sms" aria-hidden="true">✉</span>SMS</button>
+        <button className="sheet-app" disabled><span className="app-ic sms"><Icon name="mail" size={24} /></span>SMS</button>
         {extra}
       </div>
       <button className="sheet-cancel" onClick={() => onPick("cancel")}>Nahi bhejna</button>
@@ -33,7 +34,7 @@ export function Chat({ to, text, sent, highlight, onSend, children }: {
           <div className="compose-text"><pre>{text}</pre>{children}</div>
           <Target id="send" highlight={highlight}>
             <button className="send" onClick={onSend} aria-label="Send">
-              <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M3 20.5 21 12 3 3.5v6.6l12 1.9-12 1.9z" fill="currentColor"/></svg>
+              <Icon name="arrowSend" size={24} stroke={2} />
             </button>
           </Target>
         </div>
