@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<title>Demo Bill</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1440px; background: #fff; overflow: hidden; }
+  body {
+    font-family: "Helvetica Neue", "Kohinoor Devanagari", "Devanagari Sangam MN", Arial, sans-serif;
+    color: #1a1a1a; padding: 56px 64px;
+  }
+  .line { display: inline-block; white-space: nowrap; line-height: 1.15; }
+  .row { display: flex; justify-content: space-between; align-items: flex-start; }
+  .stamp {
+    display: block; text-align: center; background: #C62828; color: #fff;
+    font-size: 44px; font-weight: 800; letter-spacing: 6px; padding: 18px 0; border-radius: 8px;
+  }
+  .stamp .line { line-height: 1.1; }
+  .brand { margin-top: 44px; border-bottom: 4px solid #0D47A1; padding-bottom: 28px; }
+  .org { font-size: 50px; font-weight: 800; color: #0D47A1; }
+  .sub { font-size: 28px; color: #555; margin-top: 10px; }
+  .label { font-size: 28px; color: #555; font-weight: 600; }
+  .value { font-size: 40px; font-weight: 700; margin-top: 10px; }
+  .mono { font-family: "Menlo", monospace; letter-spacing: 2px; }
+  .section { margin-top: 48px; }
+  .right { text-align: right; }
+  .stack { display: flex; flex-direction: column; align-items: flex-start; }
+  .stack.right { align-items: flex-end; }
+  .amount-box {
+    margin-top: 56px; border: 4px solid #1a1a1a; border-radius: 12px; padding: 32px 40px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 24px;
+  }
+  .amount { font-size: 72px; font-weight: 800; }
+  .due { font-size: 36px; font-weight: 700; color: #B71C1C; }
+  table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 28px; }
+  td { padding: 12px 0; border-bottom: 2px solid #e0e0e0; }
+  td.num { text-align: right; }
+  .foot { position: absolute; left: 64px; right: 64px; bottom: 56px; font-size: 24px; color: #777; text-align: center; }
+  .foot { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+</style>
+</head>
+<body>
+  <div class="stamp"><span class="line">DEMO BILL, NOT REAL</span></div>
+
+  <div class="brand row">
+    <div class="stack">
+      <span class="line org">Demo Vidyut Vitran Nigam</span>
+      <span class="line sub">Bijli Bill / बिजली बिल · Billing Month: Nov 2026</span>
+    </div>
+  </div>
+
+  <div class="section row">
+    <div class="stack">
+      <span class="line label">Name / नाम</span>
+      <span class="line value">Sunita Devi</span>
+      <span class="line sub">H.No. 12, Ward 4, Demo Nagar</span>
+    </div>
+    <div class="stack right">
+      <span class="line label">Consumer No / उपभोक्ता संख्या</span>
+      <span class="line value mono">4512 7788 3301</span>
+      <span class="line sub">Meter No: DM-009321</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <span class="line label">Bill Details / बिल विवरण</span>
+    <table>
+      <tr><td><span class="line">Units Consumed / खपत यूनिट</span></td><td class="num"><span class="line">186</span></td></tr>
+      <tr><td><span class="line">Energy Charges</span></td><td class="num"><span class="line">₹ 1,026.00</span></td></tr>
+      <tr><td><span class="line">Fixed Charges</span></td><td class="num"><span class="line">₹ 120.00</span></td></tr>
+      <tr><td><span class="line">Electricity Duty</span></td><td class="num"><span class="line">₹ 94.00</span></td></tr>
+    </table>
+  </div>
+
+  <div class="amount-box">
+    <div class="stack">
+      <span class="line label">Amount Payable / देय राशि</span>
+      <span class="line amount">₹ 1,240.00</span>
+    </div>
+    <span class="line due">Due Date / अंतिम तिथि: 15/12/2026</span>
+  </div>
+
+  <div class="foot">
+    <span class="line">This is a sample bill made for a software demo. It is not issued by any real company.</span>
+    <span class="line">यह एक नमूना बिल है, असली नहीं।</span>
+  </div>
+
+  <script>
+    // With ?boxes, replace the page with the pixel box of every text line (for sample_bill.ocr.json).
+    if (location.search.includes('boxes')) {
+      const lines = [...document.querySelectorAll('.line')].map(el => {
+        const r = el.getBoundingClientRect();
+        return { text: el.textContent.trim(), l: Math.round(r.left), t: Math.round(r.top), r: Math.round(r.right), b: Math.round(r.bottom) };
+      });
+      document.body.innerHTML = '';
+      const pre = document.createElement('pre');
+      pre.id = 'ocr';
+      pre.textContent = JSON.stringify(lines);
+      document.body.appendChild(pre);
+    }
+  </script>
+</body>
+</html>
