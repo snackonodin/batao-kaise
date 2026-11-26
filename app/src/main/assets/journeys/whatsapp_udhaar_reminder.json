@@ -1,0 +1,37 @@
+{
+  "id": "whatsapp_udhaar_reminder",
+  "version": 1,
+  "title": "WhatsApp par udhaar ki yaad dilana",
+  "intent": "udhaar_remind",
+  "triggers": ["paisa kaise loon", "yaad dilao", "reminder bhejo"],
+  "app_package": "com.whatsapp",
+  "reviewed_by": "Batao Kaise team (demo review)",
+  "review_date": "2026-11-27",
+  "status": "demo",
+  "steps": [
+    {
+      "id": "pick_chat",
+      "say": "{name} ka naam dhoondhiye aur dabaiye.",
+      "expect_screen": { "package": "com.whatsapp", "marker_text_any": ["Send to", "Bhejein", "Forward to", "Search", "Recent chats", "Frequently contacted"] },
+      "target": { "text": "{name}" },
+      "action_hint": "tap",
+      "on_fail": "Upar search mein {name} likhiye, phir naam dabaiye."
+    },
+    {
+      "id": "send",
+      "say": "Sandesh taiyaar hai. Hare 'Send' button ko dabaiye.",
+      "expect_screen": { "package": "com.whatsapp", "marker_desc_any": ["Send", "भेजें"] },
+      "target": { "view_id": "com.whatsapp:id/send", "desc": "Send" },
+      "action_hint": "tap",
+      "advance_on_missing_target": true,
+      "on_fail": "Neeche daayein hara teer wala button dabaiye."
+    },
+    {
+      "id": "sent",
+      "say": "Bhej diya! {name} ko yaad dila di.",
+      "expect_screen": { "package": "com.whatsapp" },
+      "final": true,
+      "on_fail": ""
+    }
+  ]
+}

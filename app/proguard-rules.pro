@@ -1,0 +1,4 @@
+-keep class net.zetetic.database.** { *; }
+-keepclassmembers class * { @kotlinx.serialization.Serializable *; }
+-keep,includedescriptorclasses class com.bataokaise.app.**$$serializer { *; }
+-dontwarn org.slf4j.**

@@ -1,0 +1,112 @@
+{
+  "id": "demo_scheme_form",
+  "version": 1,
+  "title": "Yojana ka form bharna (demo web form)",
+  "intent": "schemes",
+  "triggers": [
+    "form bharna",
+    "apply karna",
+    "yojana form"
+  ],
+  "app_package": "com.android.chrome",
+  "reviewed_by": "Batao Kaise team (demo review)",
+  "review_date": "2026-11-27",
+  "status": "demo",
+  "steps": [
+    {
+      "id": "name",
+      "say": "Pehle dabbe mein apna poora naam likhiye.",
+      "expect_screen": {
+        "package": "com.android.chrome",
+        "marker_text_any": [
+          "Demo Yojana Form"
+        ]
+      },
+      "target": {
+        "view_id": "full_name",
+        "text": "Poora naam",
+        "hint": "Poora naam"
+      },
+      "action_hint": "type",
+      "done_when_filled": true,
+      "on_fail": "Upar 'Poora naam' wale dabbe mein naam likhiye."
+    },
+    {
+      "id": "age",
+      "say": "Ab apni umar likhiye: {age} saal.",
+      "expect_screen": {
+        "package": "com.android.chrome",
+        "marker_text_any": [
+          "Demo Yojana Form"
+        ]
+      },
+      "target": {
+        "view_id": "age",
+        "text": "Umar",
+        "hint": "Umar"
+      },
+      "action_hint": "type",
+      "done_when_filled": true,
+      "on_fail": "'Umar' wale dabbe mein umar likhiye."
+    },
+    {
+      "id": "mobile",
+      "say": "Ab apna mobile number likhiye.",
+      "expect_screen": {
+        "package": "com.android.chrome",
+        "marker_text_any": [
+          "Demo Yojana Form"
+        ]
+      },
+      "target": {
+        "view_id": "mobile",
+        "text": "Mobile number",
+        "hint": "Mobile number"
+      },
+      "action_hint": "type",
+      "done_when_filled": true,
+      "on_fail": "'Mobile number' wale dabbe mein number likhiye."
+    },
+    {
+      "id": "send_otp",
+      "say": "Ab 'OTP bhejein' button dabaiye.",
+      "expect_screen": {
+        "package": "com.android.chrome",
+        "marker_text_any": [
+          "Demo Yojana Form"
+        ]
+      },
+      "target": {
+        "view_id": "send_otp_btn",
+        "text": "OTP bhejein"
+      },
+      "action_hint": "tap",
+      "on_fail": "Neeche 'OTP bhejein' button dabaiye."
+    },
+    {
+      "id": "otp",
+      "say": "OTP aapke phone par aayega. Ye aap khud daaliye, phir 'Jama karein' dabaiye.",
+      "expect_screen": {
+        "package": "com.android.chrome",
+        "marker_text_any": [
+          "OTP daaliye"
+        ]
+      },
+      "sensitive": true,
+      "action_hint": "type",
+      "on_fail": "OTP khud daaliye. Kisi ko mat bataiye."
+    },
+    {
+      "id": "done",
+      "say": "Form jama ho gaya! Ye demo tha. Asli form official site par bhariye.",
+      "expect_screen": {
+        "package": "com.android.chrome",
+        "marker_text_any": [
+          "Form jama ho gaya"
+        ]
+      },
+      "final": true,
+      "on_fail": ""
+    }
+  ]
+}

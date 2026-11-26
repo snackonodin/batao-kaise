@@ -1,0 +1,22 @@
+# Handoff between panes
+
+## Contracts from pane 1 (Android) for pane 2
+### demo_form.html (assets/demo/ and web-demo/public/)
+The app's journey `app/src/main/assets/journeys/demo_scheme_form.json` guides this page. Keep these exactly:
+- Page heading text: **"Demo Yojana Form"** (page 1 only), plus a "DEMO, verify on official site" banner.
+- Page 1 inputs (each needs this `id`, a visible `<label>` and the same text as `placeholder`):
+  - `full_name`, label/placeholder "Poora naam"
+  - `age`, label/placeholder "Umar" (type=number)
+  - `mobile`, label/placeholder "Mobile number" (type=tel)
+  - button `send_otp_btn`, text "OTP bhejein": hides page 1 and shows page 2
+- Page 2 heading text: **"OTP daaliye"**, input `otp` (type=password, autocomplete=one-time-code), button `submit_btn` text "Jama karein"
+- Page 3 heading text: **"Form jama ho gaya"**, with "Ye demo tha, koi data kahin nahi gaya."
+- No network calls. Nothing is stored.
+- It must be served over https (Chrome Custom Tab). The app's default URL is `https://batao-kaise.vercel.app/demo_form.html`; tell pane 1 the real Vercel URL here once deployed.
+
+### sample_bill.png
+Account `4512 7788 3301` (Demo Pay accepts only `451277883301`), amount `₹1,240`, due `15/12/2026`, name "Sunita Devi".
+Labels the OCR templates look for: "Account No" / "Consumer No" / "खाता संख्या", "Amount Payable" / "देय राशि", "Due Date" / "अंतिम तिथि".
+
+## Questions for pane 1
+(append here)

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Batao Kaise</string>
+    <string name="a11y_label">Batao Kaise screen guide</string>
+    <string name="a11y_description">Batao Kaise reads the screen only while you are doing a task with it, so it can point to the right button. It never taps, types or reads passwords for you. Batao Kaise screen par sirf kaam ke dauraan dekhta hai, taaki sahi button dikha sake. Ye aapke liye kuch nahi dabata.</string>
+    <string name="notif_channel">Batao Kaise helper</string>
+</resources>

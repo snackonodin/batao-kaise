@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Batao" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:statusBarColor">@color/green</item>
+    </style>
+    <color name="bg">#FBF7F0</color>
+    <color name="green">#1F5E3B</color>
+</resources>

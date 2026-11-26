@@ -1,0 +1,69 @@
+{
+  "id": "demo_pay_bijli",
+  "version": 1,
+  "title": "Bijli ka bill bharna (Demo Pay)",
+  "intent": "bill_pay",
+  "triggers": ["bijli bill bharna", "light bill", "bill bharna", "electricity bill pay"],
+  "app_package": "com.bataokaise.demopay",
+  "reviewed_by": "Batao Kaise team (demo review)",
+  "review_date": "2026-11-27",
+  "status": "demo",
+  "steps": [
+    {
+      "id": "home",
+      "say": "Neeche 'Bills' dabaiye.",
+      "expect_screen": { "package": "com.bataokaise.demopay", "marker": "screen_home" },
+      "target": { "view_id": "bills_tile", "text": "Bills" },
+      "action_hint": "tap",
+      "on_fail": "Screen par 'Bills' likha dabba dhoondhiye aur dabaiye."
+    },
+    {
+      "id": "bills",
+      "say": "Ab 'Electricity' dabaiye.",
+      "expect_screen": { "package": "com.bataokaise.demopay", "marker": "screen_bills" },
+      "target": { "view_id": "electricity_tile", "text": "Electricity" },
+      "action_hint": "tap",
+      "on_fail": "'Electricity' neeche ki taraf hai. Use dabaiye."
+    },
+    {
+      "id": "account",
+      "say": "Is dabbe mein account number likhiye: {account_spoken}.",
+      "expect_screen": { "package": "com.bataokaise.demopay", "marker": "screen_electricity" },
+      "target": { "view_id": "account_field", "text": "Account / Consumer number" },
+      "action_hint": "type",
+      "done_when": { "view_id": "bill_details" },
+      "on_fail": "Upar wale dabbe mein bill ka account number likhiye."
+    },
+    {
+      "id": "continue",
+      "say": "Sunita Devi, {amount} rupaye. Ab 'Continue' dabaiye.",
+      "expect_screen": { "package": "com.bataokaise.demopay", "marker": "screen_electricity" },
+      "target": { "view_id": "continue_btn", "text": "Continue" },
+      "action_hint": "tap",
+      "on_fail": "Neeche hara 'Continue' button dabaiye."
+    },
+    {
+      "id": "pay",
+      "say": "Rakam {amount} rupaye hai. Sahi ho to 'Pay' dabaiye.",
+      "expect_screen": { "package": "com.bataokaise.demopay", "marker": "screen_pay" },
+      "target": { "view_id": "pay_btn", "text": "Pay" },
+      "action_hint": "tap",
+      "on_fail": "Neeche 'Pay' likha button dabaiye."
+    },
+    {
+      "id": "pin",
+      "say": "Ye aap khud daaliye. PIN kisi ko mat bataiye.",
+      "expect_screen": { "package": "com.bataokaise.demopay", "marker": "screen_pin" },
+      "sensitive": true,
+      "action_hint": "type",
+      "on_fail": "Apna PIN khud daaliye, phir 'Submit' dabaiye."
+    },
+    {
+      "id": "success",
+      "say": "Ho gaya! Bill bhar diya. Aapne khud kiya, shabaash!",
+      "expect_screen": { "package": "com.bataokaise.demopay", "marker": "screen_success" },
+      "final": true,
+      "on_fail": ""
+    }
+  ]
+}
