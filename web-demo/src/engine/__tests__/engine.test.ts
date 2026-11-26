@@ -139,7 +139,7 @@ describe("core workflow", () => {
     await h.step((a) => a.yes());
     expect(h.a.state.needBill).toBe(true);
     await h.step((a) => a.billOcr(BILL, 1080, 1440));
-    expect(h.said).toContain("Upar daayein aapka account number hai: 4-5-1-2-7-7-8-8-3-3-0-1.");
+    expect(h.said).toContain("Upar daayein aapka account number hai: 4-5-1-2, 7-7-8-8, 3-3-0-1.");
     expect(h.last()).toBe("Bharne ka tarika bataun?");
     await h.step((a) => a.yes());
     const pay = () => h.a.state.view as any;
@@ -181,6 +181,8 @@ describe("core workflow", () => {
     expect(v.kind).toBe("rescue");
     expect(v.summary).toContain("Screen: Bills");
     expect(v.summary).not.toContain("451277883301");
+    expect(v.summary).not.toMatch(/4-5-1-2|7-7-8-8|3-3-0-1/);
+    expect(v.summary).toContain("Kaam: Bijli ka bill bharna");
     expect(h.last()).toBe("Bhej doon?");
     await h.step((a) => a.yes());
     await h.step((a) => a.share("whatsapp"));
@@ -194,5 +196,46 @@ describe("core workflow", () => {
     await h.step((a) => a.heard("mausam kaisa hai aaj"));
     expect(h.said).toContain("Ye main abhi nahi seekha. Kisi apne se madad maangein?");
     expect(h.a.state.view.kind).toBe("rescue");
+  });
+
+  it("new task clears the old view", async () => {
+    const h = harness();
+    await h.step((a) => a.micTapped());
+    await h.step((a) => a.heard("kiska kitna baaki hai"));
+    await h.step((a) => a.yes());
+    expect(h.a.state.view.kind).toBe("ledger");
+    await h.step((a) => a.micTapped());
+    expect(h.a.state.view.kind).toBe("home");
+  });
+
+  it("new name is confirmed as new; Nahi asks for just the name", async () => {
+    const h = harness();
+    await h.step((a) => a.micTapped());
+    await h.step((a) => a.heard("Rakesh ko sau udhaar"));
+    expect(h.last()).toBe("Rakesh naya naam hai. Likh doon?");
+    await h.step((a) => a.no());
+    expect(h.last()).toBe("Sirf naam boliye.");
+    await h.step((a) => a.heard("Ramesh Yadav"));
+    expect(h.last()).toBe("Ramesh Yadav, 100 rupaye udhaar. Sahi?");
+  });
+
+  it("reminder for an unknown name does not invent a customer", async () => {
+    const h = harness();
+    await h.step((a) => a.micTapped());
+    await h.step((a) => a.heard("Pappu se paisa kaise loon"));
+    expect(h.last()).toBe("Pappu naam khaate mein nahi hai.");
+  });
+
+  it("atak gaya after a task names that task, not 'atak gaya' twice", async () => {
+    const h = harness();
+    await h.step((a) => a.micTapped());
+    await h.step((a) => a.heard("kiska kitna baaki hai"));
+    await h.step((a) => a.yes());
+    await h.step((a) => a.micTapped());
+    await h.step((a) => a.heard("main atak gaya"));
+    await h.step((a) => a.yes());
+    const v = h.a.state.view as any;
+    expect(v.summary).toContain("Kaam: Udhaar ka hisaab sunna");
+    expect(v.summary.match(/atak gaya/g)?.length ?? 0).toBe(1);
   });
 });

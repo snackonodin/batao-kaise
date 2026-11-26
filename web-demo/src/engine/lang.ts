@@ -214,5 +214,7 @@ export const parseNumber = (text: string) => findNumbers(tokenize(toLatin(text).
 
 /** "451277883301" -> "4-5-1-2-7-7-8-8-3-3-0-1" (shown); spoken as single digits. */
 export const digits = (s: string) => [...s.replace(/\D/g, "")].join("-");
+/** "451277883301" -> "4-5-1-2, 7-7-8-8, 3-3-0-1": digit by digit, in the groups printed on the bill, with pauses. */
+export const digitGroups = (s: string) => (s.replace(/\D/g, "").match(/.{1,4}/g) ?? []).map((g) => [...g].join("-")).join(", ");
 /** What the speech engine actually reads: digits separated so they are said one by one. */
 export const spokenForm = (line: string) => line.replace(/(\d)-(?=\d)/g, "$1 ").replace(/₹/g, " rupaye ");

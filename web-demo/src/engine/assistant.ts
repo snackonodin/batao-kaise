@@ -1,7 +1,7 @@
 // The core voice workflow: tap mic -> "Batao, kya karna hai?" -> speak -> read-back -> Haan -> do it, step by step.
 // Three skills of the same workflow: udhaar, bill (read + guided Demo Pay), and "atak gaya" (Rescue Circle).
 // Port of app/.../core/Assistant.kt + Tasks + JourneyRunner. No DOM, mic or speaker here: the UI does I/O.
-import { Normalized, digits, findNumbers, normalize } from "./lang";
+import { Normalized, digitGroups, findNumbers, normalize } from "./lang";
 import { Intent, caption, describe, detect, extractName, readBack } from "./intent";
 import { BillField, FieldKind, FIELD_LABEL, OcrLine, parseBill, position, spokenDate } from "./bill";
 import { KV, Ledger, pickName, resolveName, upiUri } from "./ledger";
@@ -75,6 +75,8 @@ export class Assistant {
   private payFails: Record<string, number> = {};
   private rescueOffered = false;
   private lastStep = "";
+  /** Last task the user started, for the Rescue Circle summary. */
+  private lastGoal: string | null = null;
   private bill: { account: string | null; amount: number | null } = { account: null, amount: null };
   private screenStack: PayScreen[] = [];
   private upiId: string; private shop: string; private trusted: string;
@@ -126,7 +128,8 @@ export class Assistant {
   }
   startTask() {
     this.noiseCount = 0; this.silenceCount = 0; this.noCount = 0;
-    this.set({ showPictures: false, showYesNo: false, live: "", caption: "Tap the mic and speak in Hindi or Hinglish." });
+    this.guiding = false;
+    this.set({ showPictures: false, showYesNo: false, showDone: false, needBill: false, live: "", view: { kind: "home" }, caption: "Tap the mic and speak in Hindi or Hinglish." });
     this.ask("Batao, kya karna hai?", false, (n, i) => this.onTask(n, i));
   }
   partial(text: string) { this.set({ live: text }); }
@@ -211,8 +214,8 @@ export class Assistant {
       case "udhaar_add": case "udhaar_repay":
         return this.fillUdhaar(i.name, i.amount, (name, amount) => this.confirm({ ...i, name, amount }));
       case "udhaar_remind":
-        return i.name ? this.withName(i.name, (name) => this.confirm({ kind: "udhaar_remind", name }))
-          : this.askName((nm) => this.withName(nm, (name) => this.confirm({ kind: "udhaar_remind", name })));
+        return i.name ? this.withName(i.name, (name) => this.confirm({ kind: "udhaar_remind", name }), false)
+          : this.askName((nm) => this.withName(nm, (name) => this.confirm({ kind: "udhaar_remind", name }), false));
       default: return this.confirm(i);
     }
   }
@@ -235,9 +238,15 @@ export class Assistant {
     }, true);
   }
   /** Similar names: "Ramesh Kumar ya Ramesh Yadav?" before the read-back. */
-  private withName(spoken: string, on: (full: string) => void) {
+  private withName(spoken: string, on: (full: string) => void, allowNew = true) {
     const r = resolveName(spoken, this.ledger.names());
-    if (r.kind !== "ambiguous") return on(r.name);
+    if (r.kind === "exact") return on(r.name);
+    if (r.kind === "new") {
+      if (!allowNew) { this.handler = null; return this.speak(`${r.name} naam khaate mein nahi hai.`); }
+      this.set({ caption: "A name not in the notebook: it checks before adding a new customer." });
+      return this.askYesNo(`${r.name} naya naam hai. Likh doon?`, () => on(r.name),
+        () => this.askName((nm) => this.withName(nm, on, allowNew)));
+    }
     const q = r.options.join(" ya ") + "?";
     this.set({ caption: "Similar names in the ledger: it asks which one." });
     this.ask(q, false, (n) => {
@@ -276,6 +285,11 @@ export class Assistant {
   // ---------- doing ----------
   private run(i: Intent) {
     this.handler = null;
+    const goals: Partial<Record<Intent["kind"], string>> = {
+      bill_pay: "Bijli ka bill bharna", udhaar_add: "Udhaar likhna", udhaar_repay: "Udhaar ki wapsi likhna",
+      udhaar_balance: "Udhaar ka hisaab sunna", udhaar_remind: "WhatsApp par udhaar ki yaad dilana",
+    };
+    if (goals[i.kind]) this.lastGoal = goals[i.kind]!;
     switch (i.kind) {
       case "bill_pay": return this.startBill();
       case "udhaar_add": case "udhaar_repay": {
@@ -352,10 +366,14 @@ export class Assistant {
     if (inPay) {
       const v = this.state.view as Extract<View, { kind: "pay" }>;
       const fails = Object.values(this.payFails).reduce((a, b) => a + b, 0);
-      lines.push("Kaam: Bijli ka bill bharna", "App: Demo Pay", `Screen: ${screenName[v.screen]}`, `Kahan atke: ${this.lastStep}`,
+      lines.push("Kaam: Bijli ka bill bharna", "App: Demo Pay", `Screen: ${screenName[v.screen]}`, `Kahan atke: ${v.account ? this.lastStep.split(digitGroups(v.account)).join(v.account) : this.lastStep}`,
         `Account: ${v.account}`, `Koshish: ${fails + 1} baar`);
-    } else lines.push(`Kaam: ${reason}`);
-    lines.push(`Kaaran: ${reason}`);
+      lines.push(`Kaaran: ${reason}`);
+    } else if (reason.startsWith("unknown:")) {
+      lines.push(`Unhone poocha: ${reason.slice(8).trim()}`, "Kaaran: Batao Kaise ye kaam abhi nahi jaanta");
+    } else {
+      lines.push(`Kaam: ${this.lastGoal ?? "Phone par koi kaam (shuru nahi hua)"}`, `Kaaran: unhone kaha "${reason}"`);
+    }
     const r = redact(lines.join("\n"));
     this.guiding = false; this.handler = null;
     this.set({
@@ -406,7 +424,7 @@ export class Assistant {
   private fieldLine(f: BillField, w: number, h: number): string {
     const pos = f.box ? position(f.box, w, h) : "";
     if (!f.value) return `${FIELD_LABEL[f.kind]} saaf nahi dikh raha.`;
-    if (f.kind === "account") return `${pos} aapka account number hai: ${digits(f.value)}.`.trim();
+    if (f.kind === "account") return `${pos} aapka account number hai: ${digitGroups(f.value)}.`.trim();
     if (f.kind === "amount") return `${pos} rakam hai: ${f.value.replace(/,/g, "")} rupaye.`.trim();
     return `${pos} aakhri tareekh hai: ${spokenDate(f.value)}.`.trim();
   }
@@ -424,7 +442,7 @@ export class Assistant {
   /** What to highlight and say for the current Demo Pay screen (the journey). */
   private guideStep() {
     const v = this.state.view; if (v.kind !== "pay") return;
-    const acct = v.account ? digits(v.account) : "bill wala number";
+    const acct = v.account ? digitGroups(v.account) : "bill wala number";
     const step: Record<PayScreen, [string | null, string, boolean]> = {
       home: ["bills_tile", "Neeche 'Bills' dabaiye.", false],
       bills: ["electricity_tile", "Ab 'Electricity' dabaiye.", false],
@@ -489,7 +507,7 @@ export class Assistant {
     const ok = d === (v.account || DEMO_ACCOUNT);
     this.set({ view: { ...v, accountTyped: d, accountOk: ok } });
     if (ok) this.guideStep();
-    else if (d.length === 12) { if (!this.bumpFail("account")) this.speak(`Ye number bill se alag hai. Dhyan se: ${digits(v.account || DEMO_ACCOUNT)}.`); }
+    else if (d.length === 12) { if (!this.bumpFail("account")) this.speak(`Ye number bill se alag hai. Dhyan se: ${digitGroups(v.account || DEMO_ACCOUNT)}.`); }
   }
 
   private guideAnswer(n: Normalized, i: Intent) {
