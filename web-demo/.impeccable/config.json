@@ -1,0 +1,44 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "nested-cards",
+        "value": "*",
+        "files": [
+          "web-demo/src/ui/views/PayView.tsx"
+        ],
+        "createdAt": "2026-11-26T20:28:32.539Z",
+        "reason": "Claude: Demo Pay deliberately imitates a plain dated bank app per user brief; boxed balance panel is part of that mock"
+      },
+      {
+        "rule": "wide-tracking",
+        "value": "*",
+        "files": [
+          "web-demo/src/styles.css"
+        ],
+        "createdAt": "2026-11-26T20:28:32.583Z",
+        "reason": "Claude: only .pay-demo, a 13px uppercase DEMO banner strip (user asked for a DEMO banner); not body text"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/styles.css"
+        ],
+        "createdAt": "2026-11-26T21:30:47.973Z",
+        "reason": "Claude: L121 .hl-side .hl-arrow is a CSS-border triangle (the guide's pointing arrow), not a card accent border"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "tools/bill/sample_bill.html"
+        ],
+        "createdAt": "2026-11-26T21:30:48.011Z",
+        "reason": "Claude: printed-bill fixture rendered to PNG for OCR demo, not app UI; same file already suppressed under its repo-root path"
+      }
+    ]
+  }
+}
