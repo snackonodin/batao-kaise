@@ -2,7 +2,7 @@
 
 **Speak, and your phone shows you how.** Batao Kaise is a voice-first helper for people in rural India who own a phone but can't use it fully: elders, daily-wage workers, homemakers and small shopkeepers. You press one button and say what you need in Hindi or Hinglish. It repeats what it heard, waits for your "Haan", then does the task with you, one step at a time. It never taps for you.
 
-> **Live web demo:** _URL added after deploy_ · **Video:** _YouTube link added after upload_ · **Deck:** [`docs/deck.pdf`](docs/deck.pdf)
+> **Live web demo:** _URL added after deploy_ · **Video:** _YouTube link added after upload_ (file: [`docs/video/batao-kaise-demo.mp4`](docs/video/batao-kaise-demo.mp4), 2:59) · **Deck:** [`docs/deck.pdf`](docs/deck.pdf)
 
 ![Batao Kaise web demo](docs/screenshot.png)
 
