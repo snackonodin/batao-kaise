@@ -1,44 +1,23 @@
-# Checkpoint (2026-11-27, ~00:55)
+# Checkpoint (2026-11-27, ~01:40)
 
-## Resume
-- **Pane 1 (Android):** `cd ~/projects/BK && claude`, then:
-  > Read docs/CHECKPOINT.md, docs/SPEC.md and docs/HANDOFF.md. You are pane 1. Continue from "Next for pane 1".
-- **Pane 2 (everything else):** `cd ~/projects/BK && claude`, then:
-  > Read docs/PANE2_BRIEF.md, docs/SPEC.md and docs/HANDOFF.md, then start with the shared contracts.
+## Scope (user decision, final)
+ONE core voice workflow, delivered as a **web demo** (no Android build needed). Submission = public GitHub code that runs with no keys,
+a YouTube video (≤ 3 min), `docs/deck.pdf`, and a live Vercel link. The workflow's three skills: udhaar, bill (read + guided Demo Pay), Rescue Circle.
+Schemes are cut. The Android code (`app/`, `demo-upi/`) is a frozen reference implementation, untested on a device.
 
-## Environment (already set up)
-- Build: `export JAVA_HOME=$(ls -d ~/.jdks/jdk-17*/Contents/Home); ./gradlew :app:testDebugUnitTest :app:assembleDebug`
-- JDK 17: `~/.jdks/jdk-17*` (Homebrew can't build on macOS 13). Android SDK: `~/Library/Android/sdk` (platform 35).
-- adb: `~/Library/Android/sdk/platform-tools/adb`. scrcpy: `~/.local/scrcpy/scrcpy-macos-x86_64-v5.0.1/scrcpy`.
-- BK is its own git repo. Note: `~` (home) is ALSO a git repo; never run git from outside BK.
-- Mac: 8 GB RAM, about 14 GB free disk. Only pane 1 runs Gradle. No emulator yet.
-- Secrets go in `.env` (gitignored): `HIGGSFIELD_API_KEY`, `HIGGSFIELD_API_SECRET`. Never print or commit them.
+## Panes (tmux: %0 = pane 1, %1 = pane 2; both run in ~/projects/BK and share one working folder)
+- Pane 1: `web-demo/src/engine/**` + tests, README, LICENSE, CI, deck, demo script, this file.
+- Pane 2: web-demo UI (`src/ui`, `App.tsx`, `public/`), sample bill + OCR json, Vercel deploy, video (ElevenLabs voiceover). Brief: `docs/PANE2_BRIEF.md`.
+- Pull with `git pull --rebase --autostash origin main && git push`. Never force-push.
 
-## Status by stage
-| Stage | State |
-|---|---|
-| 1. Repo, modules, Demo Mode, voice loop, read-back, TTS bubble | Code done, builds. **Not yet run on a device.** |
-| 2. Journey engine + accessibility overlay on Demo Pay | Code done, logic unit-tested. **Not yet run on a device.** |
-| 3. Bill reader (ML Kit, boxes, read-aloud, links to Demo Pay journey) | Code done, parser tested. Needs `assets/demo/sample_bill.png` (pane 2). |
-| 4. Udhaar ledger + reminder/QR + Rescue Circle | Redactor (tested), NameMatch (tested), encrypted Room ledger + PIN secrets written. **Still to do:** ledger screen + PIN UI, Tasks udhaar flows (add/repay/balance/remind, similar-name ask before read-back), QR (ZXing) + WhatsApp share + journey start, Rescue screen (summary from JourneyState, redact, edit, read aloud, "Bhej doon?", share WhatsApp/Gemini/Claude, save RescueCase). |
-| 5. Schemes, error handling polish, onboarding, README, CI, Release | Not started (pane 2 owns README/CI). |
-| 6. Web demo (Vercel), Wispr Flow API engine | Not started. `WisprFlowInput` is a stub. |
+## Done
+- Engine (TS, pure, no DOM): language layer, intents, dialogue state machine, ledger, bill parser, redactor, guided Demo Pay, Rescue Circle. 15 vitest tests drive every flow.
+- CI (`.github/workflows/build.yml`): web demo tests + build, green.
+- README (real vs mocked table), MIT LICENSE, `docs/deck.md` + `docs/deck.pdf` (10 slides), `docs/demo-script.md`.
+- GitHub: https://github.com/snackonodin/batao-kaise (public).
+- ElevenLabs key in `.env` (gitignored). No Higgsfield key yet.
+- tmux restored to the original config (styled one saved as `~/.tmux.conf.styled-nov23`).
 
-Tests: 8 classes, all passing (numbers, normalizer, intents, 20 debug phrases, journeys + guide logic, bill parser, redactor, name match).
-Debug APK is 30.8 MB (unshrunk). Release with R8 + ABI splits should fit under 30 MB; measure in stage 5.
-
-## Next for pane 1
-1. Finish stage 4 (list above). `Assistant` needs a pre-confirm hook so name ambiguity ("Ramesh Kumar ya Ramesh Yadav?") is asked BEFORE the read-back.
-2. Device: needs a phone with USB debugging, or an emulator (needs ~8 GB more disk). Ask the user which one.
-   Once a device is connected: install both APKs, grant via adb (`pm grant` mic/camera/notifications, `appops set com.bataokaise.app SYSTEM_ALERT_WINDOW allow`,
-   `settings put secure enabled_accessibility_services com.bataokaise.app/com.bataokaise.app.guide.GuideAccessibilityService`, `settings put secure accessibility_enabled 1`),
-   then test Demo Pay guide end to end with `uiautomator dump` + `screencap`.
-3. Stage 5: schemes (rules over assets/demo/schemes.json, Custom Tab to the demo form URL from HANDOFF.md), onboarding by voice, release build size.
-4. After GitHub login: create public repo `batao-kaise`, push, tag `v0.1.0` for the Release once CI (pane 2) exists.
-
-## Known risks (marked difficult)
-- 🔴 Accessibility guide on a real device (positions, auto-advance). Untested on device.
-- 🔴 WhatsApp Send-button targeting (unstable view IDs). Falls back to content-desc "Send", then spoken steps.
-- 🔴 Chrome Custom Tab web-field highlighting. Matches by text/hint; positions may drift.
-- 🔴 Wispr Flow API: gated access. Ship as "written, untested" unless approved.
-- 🟠 Barge-in is tap-to-interrupt, not full-duplex. Silence timing relies on recognizer timeouts (~6 s / ~12 s).
+## Open
+- Pane 2: UI → Vercel deploy → video. Then pane 1 adds the live URL + screenshot to the README, and the YouTube link once uploaded (the user uploads, or via Chrome if logged in).
+- Final report (spec section 18): every feature marked working / mocked / fallback / untested.
